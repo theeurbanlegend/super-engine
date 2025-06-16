@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offers - Seller Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 24px 0;
+        }
+        
+        .profile {
+            display: flex;
+            align-items: center;
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+        
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .nav-item:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+        
+        .nav-item.active {
+            background: #eff6ff;
+            color: #3b82f6;
+            border-right: 3px solid #3b82f6;
+        }
+        
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 32px;
+        }
+        
+        .page-header {
+            margin-bottom: 32px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            color: #64748b;
+            font-size: 16px;
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .search-controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f9fafb;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+        }
+        
+        .sort-select {
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            min-width: 140px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 16px 24px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .tab:hover {
+            color: #1e293b;
+            background: #f8fafc;
+        }
+        
+        .tab.active {
+            color: #3b82f6;
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #3b82f6;
+        }
+        
+        .tab-count {
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        
+        .tab.active .tab-count {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+        
+        .tab-content {
+            padding: 48px 24px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .empty-state-icon {
+            width: 64px;
+            height: 64px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        
+        .empty-state-description {
+            color: #6b7280;
+            font-size: 14px;
+            max-width: 320px;
+            line-height: 1.5;
+        }
+        
+        .offers-list {
+            padding: 0;
+        }
+        
+        .offer-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .offer-item:last-child {
+            border-bottom: none;
+        }
+        
+        .offer-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .offer-avatar {
+            width: 40px;
+            height: 40px;
+            background: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        
+        .offer-details h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .offer-meta {
+            font-size: 13px;
+            color: #6b7280;
+        }
+        
+        .offer-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #059669;
+        }
+        
+        .offer-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-accept {
+            background: #059669;
+            color: white;
+            border: none;
+        }
+        
+        .btn-accept:hover {
+            background: #047857;
+        }
+        
+        .btn-decline {
+            background: #dc2626;
+            color: white;
+            border: none;
+        }
+
+         .logout {
+            margin-top: auto;
+            padding: 12px 24px;
+            color: #ef4444;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .btn-decline:hover {
+            background: #b91c1c;
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-avatar">BM</div>
+                <div>
+                    <div style="font-weight: 600;">Bewton </div>
+                </div>
+            </div>
+            
+           <nav style="flex: 1;">
+                <a href="/dashboard.html" class="nav-item">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 7 5-5 5 5"/>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="/listings.html" class="nav-item">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                    </svg>
+                    Listings
+                </a>
+                <a href="/offers.html" class="nav-item active">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 110 2h-1v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6H3a1 1 0 110-2h4z"/>
+                    </svg>
+                    Offers
+                </a>
+            </nav>
+               <a href="#" class="logout">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                Logout
+            </a>
+        </aside>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Offers</h1>
+                <p class="page-subtitle">Manage offers from potential buyers</p>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="search-controls">
+                        <input type="text" class="search-input" placeholder="Search listing name, venue, username, email">
+                        <select class="sort-select">
+                            <option>Sort by Date</option>
+                            <option>Sort by Amount</option>
+                            <option>Sort by Buyer</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <button class="tab" onclick="switchTab('pending')">
+                        Pending
+                        <span class="tab-count">0</span>
+                    </button>
+                    <button class="tab active" onclick="switchTab('accepted')">
+                        Accepted
+                        <span class="tab-count">0</span>
+                    </button>
+                    <button class="tab" onclick="switchTab('declined')">
+                        Declined
+                        <span class="tab-count">0</span>
+                    </button>
+                </div>
+                
+                <div id="pending-content" class="tab-content" style="display: none;">
+                    <div class="empty-state-icon">
+                        <svg width="32" height="32" fill="none" stroke="#9ca3af" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-state-title">No pending offers</h3>
+                    <p class="empty-state-description">New offers from buyers will appear here and await your response.</p>
+                </div>
+                
+                <div id="accepted-content" class="tab-content">
+                    <div class="empty-state-icon">
+                        <svg width="32" height="32" fill="none" stroke="#9ca3af" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-state-title">No accepted offers</h3>
+                    <p class="empty-state-description">Offers you accept will show up here. Once you accept an offer, you'll be able to coordinate with the buyer.</p>
+                </div>
+                
+                <div id="declined-content" class="tab-content" style="display: none;">
+                    <div class="empty-state-icon">
+                        <svg width="32" height="32" fill="none" stroke="#9ca3af" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-state-title">No declined offers</h3>
+                    <p class="empty-state-description">Offers you decline will be archived here for your records.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            document.getElementById(tabName + '-content').style.display = 'flex';
+        }
+        
+        // Simulate some offers for demonstration
+        function addSampleOffers() {
+            const pendingContent = document.getElementById('pending-content');
+            pendingContent.innerHTML = `
+                <div class="offers-list">
+                    <div class="offer-item">
+                        <div class="offer-info">
+                            <div class="offer-avatar">JD</div>
+                            <div class="offer-details">
+                                <h4>John Doe</h4>
+                                <div class="offer-meta">Concert Ticket • Submitted 2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="offer-amount">£45.00</div>
+                        <div class="offer-actions">
+                            <button class="btn btn-accept">Accept</button>
+                            <button class="btn btn-decline">Decline</button>
+                            <button class="btn btn-secondary">View Details</button>
+                        </div>
+                    </div>
+                    <div class="offer-item">
+                        <div class="offer-info">
+                            <div class="offer-avatar">SM</div>
+                            <div class="offer-details">
+                                <h4>Sarah Miller</h4>
+                                <div class="offer-meta">Festival Pass • Submitted 5 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="offer-amount">£125.00</div>
+                        <div class="offer-actions">
+                            <button class="btn btn-accept">Accept</button>
+                            <button class="btn btn-decline">Decline</button>
+                            <button class="btn btn-secondary">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Update tab count
+            document.querySelector('.tab').innerHTML = 'Pending <span class="tab-count">2</span>';
+        }
+        
+        // Uncomment to see sample offers
+        // setTimeout(addSampleOffers, 2000);
+    </script>
+</body>
+</html>

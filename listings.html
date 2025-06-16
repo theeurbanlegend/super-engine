@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listings - Seller Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 24px 0;
+        }
+        
+        .profile {
+            display: flex;
+            align-items: center;
+            padding: 0 24px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+        
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .nav-item:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+        
+        .nav-item.active {
+            background: #eff6ff;
+            color: #3b82f6;
+            border-right: 3px solid #3b82f6;
+        }
+        
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 32px;
+        }
+        
+        .page-header {
+            margin-bottom: 32px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            color: #64748b;
+            font-size: 16px;
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .search-controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            background: #f9fafb;
+            min-width: 300px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+        }
+        
+        .sort-select {
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            min-width: 140px;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 16px 24px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .tab:hover {
+            color: #1e293b;
+            background: #f8fafc;
+        }
+        
+        .tab.active {
+            color: #3b82f6;
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #3b82f6;
+        }
+        
+        .tab-count {
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        
+        .tab.active .tab-count {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+        
+        .tab-content {
+            padding: 48px 24px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .empty-state-icon {
+            width: 64px;
+            height: 64px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+        
+        .empty-state-description {
+            color: #6b7280;
+            font-size: 14px;
+            max-width: 320px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        
+        .listings-grid {
+            padding: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        
+        .listing-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        
+        .listing-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .listing-image {
+            height: 160px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            position: relative;
+        }
+        
+        .listing-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-sold {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-expired {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .listing-content {
+            padding: 20px;
+        }
+        
+        .listing-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .listing-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .listing-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #059669;
+        }
+        
+        .listing-date {
+            font-size: 13px;
+            color: #6b7280;
+        }
+        
+        .listing-venue {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 16px;
+        }
+        
+        .listing-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn-edit {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-edit:hover {
+            background: #e5e7eb;
+        }
+        
+        .btn-delete {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+        
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+         .logout {
+            margin-top: auto;
+            padding: 12px 24px;
+            color: #ef4444;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        @media (max-width: 768px) {
+            .header-row {
+                flex-direction: column;
+                gap: 16px;
+                align-items: stretch;
+            }
+            
+            .search-controls {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: auto;
+            }
+            
+            .listings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-avatar">BM</div>
+                <div>
+                    <div style="font-weight: 600;">Bewton Maina</div>
+                </div>
+            </div>
+            
+           <nav style="flex: 1;">
+                <a href="/dashboard.html" class="nav-item ">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 7 5-5 5 5"/>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="/listings.html" class="nav-item active">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                    </svg>
+                    Listings
+                </a>
+                <a href="/offers.html" class="nav-item">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 110 2h-1v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6H3a1 1 0 110-2h4z"/>
+                    </svg>
+                    Offers
+                </a>
+            </nav>
+               <a href="#" class="logout">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                Logout
+            </a>
+        </aside>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Listings</h1>
+                <p class="page-subtitle">Manage your ticket listings</p>
+            </div>
+            
+            <div class="content-card">
+                <div class="card-header">
+                    <div class="header-row">
+                        <div class="search-controls">
+                            <input type="text" class="search-input" placeholder="Search listing name, venue, username, email">
+                            <select class="sort-select">
+                                <option>Sort by Date</option>
+                                <option>Sort by Price</option>
+                                <option>Sort by Status</option>
+                                <option>Sort by Event</option>
+                            </select>
+                        </div>
+                        <button class="btn-primary" onclick="createListing()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            Create Listing
+                        </button>
+                    </div>
+                    
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <div class="stat-number">1</div>
+                            <div class="stat-label">Active</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">Sold</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">Expired</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('active')">
+                        Active
+                        <span class="tab-count">1</span>
+                    </button>
+                    <button class="tab" onclick="switchTab('sold')">
+                        Sold
+                        <span class="tab-count">0</span>
+                    </button>
+                    <button class="tab" onclick="switchTab('expired')">
+                        Expired
+                        <span class="tab-count">0</span>
+                    </button>
+                </div>
+                
+                <div id="active-content" class="listings-grid">
+                    <div class="listing-card">
+                        <div class="listing-image">
+                            <span class="listing-status status-active">Active</span>
+                            🎵
+                        </div>
+                        <div class="listing-content">
+                            <h3 class="listing-title">Summer Music Festival 2025</h3>
+                            <div class="listing-details">
+                                <span class="listing-price">£75.00</span>
+                                <span class="listing-date">Jul 15, 2025</span>
+                            </div>
+                            <div class="listing-venue">Hyde Park, London</div>
+                            <div class="listing-actions">
+                                <a href="#" class="btn-sm btn-edit">Edit</a>
+                                <a href="#" class="btn-sm btn-delete">Remove</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="sold-content" class="tab-content" style="display: none;">
+                    <div class="empty-state-icon">
+                        <svg width="32" height="32" fill="none" stroke="#9ca3af" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-state-title">No sold listings</h3>
+                    <p class="empty-state-description">Once you sell tickets, they'll appear here with transaction details and buyer information.</p>
+                </div>
+                
+                <div id="expired-content" class="tab-content" style="display: none;">
+                    <div class="empty-state-icon">
+                        <svg width="32" height="32" fill="none" stroke="#9ca3af" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-state-title">No expired listings</h3>
+                    <p class="empty-state-description">Listings that pass their event date or are manually expired will appear here.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.listings-grid, .tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            if (tabName === 'active') {
+                document.getElementById('active-content').style.display = 'grid';
+            } else {
+                document.getElementById(tabName + '-content').style.display = 'flex';
+            }
+        }
+        
+        function createListing() {
+            alert('Create listing functionality would open here');
+        }
+        
+        // Add more sample listings for demonstration
+        function addSampleListings() {
+            const activeContent = document.getElementById('active-content');
+            
+            // Add a few more sample listings
+            const sampleListings = [
+                {
+                    title: 'Premier League Final',
+                    price: '£180.00',
+                    date: 'May 25, 2025',
+                    venue: 'Wembley Stadium',
+                    emoji: '⚽',
+                    status: 'active'
+                },
+                {
+                    title: 'The Beatles Tribute Concert',
+                    price: '£45.00',
+                    date: 'Jun 10, 2025',
+                    venue: 'Royal Albert Hall',
+                    emoji: '🎸',
+                    status: 'active'
+                }
+            ];
+            
+            sampleListings.forEach(listing => {
+                const listingHTML = `
+                    <div class="listing-card">
+                        <div class="listing-image">
+                            <span class="listing-status status-${listing.status}">${listing.status.charAt(0).toUpperCase() + listing.status.slice(1)}</span>
+                            ${listing.emoji}
+                        </div>
+                        <div class="listing-content">
+                            <h3 class="listing-title">${listing.title}</h3>
+                            <div class="listing-details">
+                                <span class="listing-price">${listing.price}</span>
+                                <span class="listing-date">${listing.date}</span>
+                            </div>
+                            <div class="listing-venue">${listing.venue}</div>
+                            <div class="listing-actions">
+                                <a href="#" class="btn-sm btn-edit">Edit</a>
+                                <a href="#" class="btn-sm btn-delete">Remove</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                activeContent.insertAdjacentHTML('beforeend', listingHTML);
+            });
+            
+            // Update counts
+            document.querySelector('.tab.active .tab-count').textContent = '3';
+            document.querySelector('.stat-card .stat-number').textContent = '3';
+        }
+        
+        // Uncomment to see more sample listings
+        // setTimeout(addSampleListings, 1000);
+    </script>
+</body>
+</html>
